@@ -1,0 +1,64 @@
+package  com.BackEnd.Master.GYM.services.Impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import  com.BackEnd.Master.GYM.Exceptions.EntityNotFoundException;
+import  com.BackEnd.Master.GYM.Exceptions.InvalidEntityException;
+
+import  com.BackEnd.Master.GYM.entity.AppUsers;
+import  com.BackEnd.Master.GYM.repository.AppUserRepo;
+import  com.BackEnd.Master.GYM.services.AppUserService;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class AppUserServiceImpl implements AppUserService{
+    
+    private final AppUserRepo appUserRepo;
+
+    @Override
+    public AppUsers findById(Long id) {
+        return appUserRepo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
+    }
+
+    @Override
+    public List<AppUsers> findAll() {
+        return appUserRepo.findAll();
+    }
+    
+    @Override
+    public AppUsers findByUserName(String userName) {
+        return appUserRepo.findByUserName(userName);
+    }
+
+    @Override
+    public AppUsers insert(AppUsers entity) {
+        if (entity.getUserName() == null || entity.getUserName().isEmpty()) {
+            throw new InvalidEntityException("Username cannot be empty.");
+        }
+        return appUserRepo.save(entity);
+    }
+
+    @Override
+    public AppUsers update(AppUsers Entity) {
+        AppUsers currentUser = appUserRepo.findById(Entity.getId())
+        .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        currentUser.setUserName(Entity.getUserName());
+        currentUser.setEmail(Entity.getEmail());
+        currentUser.setTelephone(Entity.getTelephone());
+        currentUser.setMotDePasse(Entity.getMotDePasse());
+        
+        return appUserRepo.save(currentUser);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        appUserRepo.deleteById(id);
+    }
+
+
+}
