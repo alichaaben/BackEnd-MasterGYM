@@ -92,6 +92,7 @@ public class customerController {
             @RequestParam("dateFin") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dateFin,
             @RequestParam("pack") String pack,
             @RequestParam("userId") Long userId,
+            @RequestParam("montPay") String montPay,
             @RequestParam("profileImage") MultipartFile profileImage) throws IOException {
 
         AppUsers user = userRepo.findById(userId);
@@ -107,6 +108,7 @@ public class customerController {
         customer.setDateFin(dateFin);
         customer.setPack(pack);
         customer.setUser(user);
+        customer.setMontPay(montPay);
 
         if (profileImage.isEmpty()) {
             throw new RuntimeException("Profile image is required");
@@ -143,6 +145,7 @@ public class customerController {
             @RequestParam("dateFin") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dateFin,
             @RequestParam("pack") String pack,
             @RequestParam("userId") Long userId,
+            @RequestParam("montPay") String montPay,
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws IOException {
 
         customer currentCustomer = custService.findById(id);
@@ -157,6 +160,7 @@ public class customerController {
         currentCustomer.setDateDebut(dateDebut);
         currentCustomer.setDateFin(dateFin);
         currentCustomer.setPack(pack);
+        currentCustomer.setMontPay(montPay);
 
         AppUsers user = userRepo.findById(userId);
         if (user == null) {

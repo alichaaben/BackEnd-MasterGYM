@@ -35,6 +35,11 @@ public class AppUserServiceImpl implements AppUserService{
     }
 
     @Override
+    public List<AppUsers> findByRoleRoleName(String roleName) {
+        return appUserRepo.findByRoleRoleName(roleName);
+    }
+
+    @Override
     public AppUsers insert(AppUsers entity) {
         if (entity.getUserName() == null || entity.getUserName().isEmpty()) {
             throw new InvalidEntityException("Username cannot be empty.");

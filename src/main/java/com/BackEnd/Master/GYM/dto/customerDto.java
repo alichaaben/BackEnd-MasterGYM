@@ -15,5 +15,6 @@ public class customerDto {
     private LocalDate dateDebut;
     private LocalDate dateFin;
     private Long userId;
+    private String montPay;
 
 }

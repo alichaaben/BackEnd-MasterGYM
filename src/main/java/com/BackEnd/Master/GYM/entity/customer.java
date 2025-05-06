@@ -33,6 +33,7 @@ public class customer {
     private String profileImage;
     private LocalDate dateDebut;
     private LocalDate dateFin;
+    private String montPay;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

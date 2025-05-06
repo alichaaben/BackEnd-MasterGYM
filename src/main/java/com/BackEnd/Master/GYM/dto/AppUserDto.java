@@ -12,5 +12,6 @@ public class AppUserDto {
     private String motDePasse;
     private String roleName;
     private String profileImage;
+    private String description;
 
 }

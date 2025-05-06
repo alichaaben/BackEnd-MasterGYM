@@ -58,6 +58,7 @@ public class customerServiceImpl implements customerService{
         currentUser.setDateDebut(Entity.getDateDebut());
         currentUser.setDateFin(Entity.getDateFin());
         currentUser.setPack(Entity.getPack());
+        currentUser.setMontPay(Entity.getMontPay());
         
         return customerRepo.save(currentUser);
     }

@@ -50,6 +50,13 @@ public class AppUserController {
         return ResponseEntity.ok(userDtos);
     }
 
+    @GetMapping("/by-role")
+    public ResponseEntity<List<AppUserDto>> findByRoleName(@RequestParam String roleName) {
+        List<AppUsers> entities = appUserService.findByRoleRoleName(roleName);
+        List<AppUserDto> userDtos = appUserMapper.map(entities);
+        return ResponseEntity.ok(userDtos);
+    }
+
     @GetMapping("/filtre")
     public ResponseEntity<AppUserDto> filtre(@RequestParam String userName) {
         AppUsers entity = appUserService.findByUserName(userName);
@@ -82,6 +89,7 @@ public class AppUserController {
             @RequestParam("telephone") String telephone,
             @RequestParam("motDePasse") String motDePasse,
             @RequestParam("roleName") String roleName,
+            @RequestParam("description") String description,
             @RequestParam("profileImage") MultipartFile profileImage) throws IOException {
 
         Roles role = rolesRepo.findByRoleName(roleName)
@@ -97,6 +105,7 @@ public class AppUserController {
         //user.setMotDePasse(hashedPassword);
         user.setMotDePasse(motDePasse);
         user.setRole(role);
+        user.setDescription(description);
 
         if (profileImage.isEmpty()) {
             throw new RuntimeException("Profile image is required");
@@ -131,6 +140,7 @@ public class AppUserController {
             @RequestParam("telephone") String telephone,
             @RequestParam("motDePasse") String motDePasse,
             @RequestParam("roleName") String roleName,
+            @RequestParam("description") String description,
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws IOException {
 
         AppUsers currentUser = appUserService.findById(id);
@@ -142,6 +152,7 @@ public class AppUserController {
         currentUser.setUserName(userName);
         currentUser.setEmail(email);
         currentUser.setTelephone(telephone);
+        currentUser.setDescription(description);
         // Hachage du mot de passe avec BCrypt
         //String hashedPassword = passwordEncoder.encode(motDePasse);
         //currentUser.setMotDePasse(hashedPassword);

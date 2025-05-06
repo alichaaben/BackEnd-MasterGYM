@@ -12,6 +12,8 @@ public interface AppUserService {
 
     AppUsers findByUserName(String userName);
 
+    List<AppUsers> findByRoleRoleName(String roleName);
+
     AppUsers insert(AppUsers Entity);
 
     AppUsers update(AppUsers Entity);

@@ -29,6 +29,7 @@ public class AppUsers {
     private String telephone;
     private String motDePasse;
     private String profileImage;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
