@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -38,6 +39,19 @@ public class TrainingSessionController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
         List<TrainingSession> entities = trainingSessionService.findByDateRange(start, end);
         return ResponseEntity.ok(trainingSessionMapper.map(entities));
+    }
+
+    @GetMapping("/count/today")
+    public long getTotalSessionsToday(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return trainingSessionService.countByDate(date);
+    }
+    
+    @GetMapping("/count/active")
+    public long getActiveSessionsCount(
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalTime date2
+    ) {
+        return trainingSessionService.countActiveSessions(date, date2);
     }
 
     @PostMapping

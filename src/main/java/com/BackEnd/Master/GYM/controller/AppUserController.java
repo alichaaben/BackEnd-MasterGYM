@@ -33,9 +33,9 @@ public class AppUserController {
     private final AppUserService appUserService;
     private final AppUserMapper appUserMapper;
     private final RolesRepo rolesRepo;
-    //private final PasswordEncoder passwordEncoder;
+    // private final PasswordEncoder passwordEncoder;
 
-    //@PreAuthorize("hasAuthority('ROLE_Employe','ROLE_Admin')")
+    // @PreAuthorize("hasAuthority('ROLE_Employe','ROLE_Admin')")
     @GetMapping("/{id}")
     public ResponseEntity<AppUserDto> findById(@PathVariable Long id) {
         AppUsers entity = appUserService.findById(id);
@@ -48,6 +48,24 @@ public class AppUserController {
         List<AppUsers> entities = appUserService.findAll();
         List<AppUserDto> userDtos = appUserMapper.map(entities);
         return ResponseEntity.ok(userDtos);
+    }
+    
+    @GetMapping("/count")
+    public ResponseEntity<Long> countAllUsers() {
+        long entities = appUserService.count();
+        return ResponseEntity.ok(entities);
+    }
+
+    @GetMapping("/count-coach")
+    public ResponseEntity<Long> countByRole(@RequestParam String roleName) {
+        long entities = appUserService.countByRoleRoleName(roleName);
+        return ResponseEntity.ok(entities);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<AppUserDto>> searchUsers(@RequestParam String query) {
+        List<AppUsers> entities = appUserService.searchUsers(query);
+        return ResponseEntity.ok(appUserMapper.map(entities));
     }
 
     @GetMapping("/by-role")
@@ -96,13 +114,13 @@ public class AppUserController {
                 .orElseThrow(() -> new RuntimeException("Role not found"));
 
         // Hachage du mot de passe avec BCrypt
-        //String hashedPassword = passwordEncoder.encode(motDePasse);
+        // String hashedPassword = passwordEncoder.encode(motDePasse);
 
         AppUsers user = new AppUsers();
         user.setUserName(userName);
         user.setEmail(email);
         user.setTelephone(telephone);
-        //user.setMotDePasse(hashedPassword);
+        // user.setMotDePasse(hashedPassword);
         user.setMotDePasse(motDePasse);
         user.setRole(role);
         user.setDescription(description);
@@ -154,8 +172,8 @@ public class AppUserController {
         currentUser.setTelephone(telephone);
         currentUser.setDescription(description);
         // Hachage du mot de passe avec BCrypt
-        //String hashedPassword = passwordEncoder.encode(motDePasse);
-        //currentUser.setMotDePasse(hashedPassword);
+        // String hashedPassword = passwordEncoder.encode(motDePasse);
+        // currentUser.setMotDePasse(hashedPassword);
         currentUser.setMotDePasse(motDePasse);
         Roles role = rolesRepo.findByRoleName(roleName)
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with name: " + roleName));
@@ -174,8 +192,6 @@ public class AppUserController {
             String imagePath = uploadDir + imageName;
             profileImage.transferTo(new File(imagePath));
 
-            // pour sauv just le nom de l'imge dans la BD:
-            // currentUser.setProfileImage(imagePath);
             currentUser.setProfileImage(imageName);
         }
 
@@ -227,6 +243,27 @@ public class AppUserController {
         String jsonResponse = "{\"message\": \"User and associated image deleted successfully.\"}";
 
         return ResponseEntity.ok(jsonResponse);
+    }
+
+
+    @PatchMapping("/password")
+    public ResponseEntity<AppUserDto> updatePassword(@RequestBody AppUserDto pass) {
+
+        AppUsers currentUser = appUserService.findById(pass.getId());
+        if (currentUser == null) {
+            throw new ResourceNotFoundException("User not found with ID: " + pass.getId());
+        }
+
+        // Hachage du mot de passe avec BCrypt
+        // String hashedPassword = passwordEncoder.encode(password);
+        // currentUser.setMotDePasse(hashedPassword);
+        currentUser.setMotDePasse(pass.getMotDePasse());
+
+        AppUsers updatedUser = appUserService.update(currentUser);
+
+        AppUserDto responseDto = appUserMapper.map(updatedUser);
+
+        return ResponseEntity.ok(responseDto);
     }
 
 }

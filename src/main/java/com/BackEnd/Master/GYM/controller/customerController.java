@@ -51,6 +51,18 @@ public class customerController {
         return ResponseEntity.ok(customerDtos);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> countAllCustomers() {
+        long entities = custService.count();
+        return ResponseEntity.ok(entities);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<customerDto>> searchCustomers(@RequestParam String query) {
+        List<customer> entities = custService.searchCustomers(query);
+        return ResponseEntity.ok(custMapper.map(entities));
+    }
+
     @GetMapping("/filtre-name")
     public ResponseEntity<customerDto> filtre(@RequestParam String userName) {
         customer entity = custService.findByUserName(userName);

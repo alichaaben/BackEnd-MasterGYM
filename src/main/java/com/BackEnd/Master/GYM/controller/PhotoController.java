@@ -7,6 +7,10 @@ import com.BackEnd.Master.GYM.repository.AlbumRepo;
 import com.BackEnd.Master.GYM.Mapper.PhotoMapper;
 import com.BackEnd.Master.GYM.services.PhotoService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +32,6 @@ public class PhotoController {
     private final PhotoMapper photoMapper;
     private final AlbumRepo albumRepo;
 
-
     @GetMapping("/{id}")
     public ResponseEntity<PhotoDto> findById(@PathVariable Long id) {
         Photo entity = photoService.findById(id);
@@ -48,6 +51,24 @@ public class PhotoController {
         List<Photo> entities = photoService.findByAlbumId(albumId);
         List<PhotoDto> dtos = photoMapper.map(entities);
         return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/images/{imageName}")
+    public ResponseEntity<?> getImage(@PathVariable String imageName) {
+        String imagePath = "/home/ali/Bureau/frelance/Master GYM/FrontEnd/src/assets/Gallery/" + imageName;
+        File imgFile = new File(imagePath);
+
+        if (!imgFile.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(new FileSystemResource(imgFile));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping(consumes = { "multipart/form-data" })
@@ -92,8 +113,7 @@ public class PhotoController {
         return ResponseEntity.ok(responseDto);
     }
 
-
-    @PutMapping(consumes = {"multipart/form-data"})
+    @PutMapping(consumes = { "multipart/form-data" })
     public ResponseEntity<PhotoDto> update(
             @RequestParam("id") Long id,
             @RequestParam("name") String name,
@@ -106,8 +126,6 @@ public class PhotoController {
 
         currentPhoto.setName(name);
         currentPhoto.setDescription(description);
-
-
 
         if (photoImage != null && !photoImage.isEmpty()) {
             @SuppressWarnings("null")
@@ -134,14 +152,12 @@ public class PhotoController {
         return ResponseEntity.ok(responseDto);
     }
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {
         Photo photo = photoService.findById(id);
         if (photo == null) {
             throw new ResourceNotFoundException("Photo not found with ID: " + id);
         }
-
 
         String uploadDir = "/home/ali/Bureau/frelance/Master GYM/FrontEnd/src/assets/Gallery/";
         if (photo.getImageName() != null) {

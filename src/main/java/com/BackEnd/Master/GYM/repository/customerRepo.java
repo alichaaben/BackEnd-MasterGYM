@@ -14,4 +14,9 @@ public interface customerRepo extends JpaRepository <customer,Long> {
     List <customer> findByUserId(Long id);
     customer findByUserName(String userName);
 
+        List<customer> findByUserNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrTelephoneContainingIgnoreCase(
+        String userName, String email, String telephone);
+
+        long count();
+
 }

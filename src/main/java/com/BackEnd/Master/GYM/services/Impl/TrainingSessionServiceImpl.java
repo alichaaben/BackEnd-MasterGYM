@@ -83,4 +83,18 @@ public class TrainingSessionServiceImpl implements TrainingSessionService {
     private boolean isTimeConflict(LocalTime start1, LocalTime end1, LocalTime start2, LocalTime end2) {
         return !(end1.isBefore(start2) || start1.isAfter(end2));
     }
+    
+    @Override
+    public long countByDate(LocalDate date) {
+        return trainingSessionRepo.countByDate(LocalDate.now());
+    }
+    
+    @Override
+    public long countActiveSessions(LocalDate date, LocalTime currentTime) {
+        return trainingSessionRepo.countActiveSessions(LocalDate.now(), LocalTime.now());
+    }
+
+
+
+
 }

@@ -20,4 +20,8 @@ public interface customerService {
 
     void deleteById(Long id);
 
+    List<customer> searchCustomers(String query);
+
+    long count();
+
 }

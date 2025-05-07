@@ -40,6 +40,22 @@ public class AppUserServiceImpl implements AppUserService{
     }
 
     @Override
+    public long count() {
+        return appUserRepo.count();
+    }
+
+    @Override
+    public long countByRoleRoleName(String roleName) {
+        return appUserRepo.countByRoleRoleName(roleName);
+    }
+
+    @Override
+    public List<AppUsers> searchUsers(String query) {
+        return appUserRepo.findByUserNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrTelephoneContainingIgnoreCase(
+                query, query, query);
+    }
+
+    @Override
     public AppUsers insert(AppUsers entity) {
         if (entity.getUserName() == null || entity.getUserName().isEmpty()) {
             throw new InvalidEntityException("Username cannot be empty.");
@@ -56,6 +72,15 @@ public class AppUserServiceImpl implements AppUserService{
         currentUser.setEmail(Entity.getEmail());
         currentUser.setTelephone(Entity.getTelephone());
         currentUser.setMotDePasse(Entity.getMotDePasse());
+        
+        return appUserRepo.save(currentUser);
+    }
+
+    @Override
+    public AppUsers updatePassword(Long userId ,String password) {
+        AppUsers currentUser = appUserRepo.findById(userId)
+        .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        currentUser.setMotDePasse(password);
         
         return appUserRepo.save(currentUser);
     }

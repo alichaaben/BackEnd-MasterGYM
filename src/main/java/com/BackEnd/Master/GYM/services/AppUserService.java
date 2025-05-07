@@ -18,6 +18,14 @@ public interface AppUserService {
 
     AppUsers update(AppUsers Entity);
 
+    AppUsers updatePassword(Long userId ,String password);
+
     void deleteById(Long id);
+
+    List<AppUsers> searchUsers(String query);
+
+    long count();
+
+    long countByRoleRoleName(String roleName);
 
 }

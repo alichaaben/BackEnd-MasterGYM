@@ -28,6 +28,17 @@ public class customerServiceImpl implements customerService{
     public List<customer> findAll() {
         return customerRepo.findAll();
     }
+
+        @Override
+    public List<customer> searchCustomers(String query) {
+        return customerRepo.findByUserNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrTelephoneContainingIgnoreCase(
+                query, query, query);
+    }
+
+    @Override
+    public long count() {
+        return customerRepo.count();
+    }
     
     @Override
     public customer findByUserName(String userName) {
