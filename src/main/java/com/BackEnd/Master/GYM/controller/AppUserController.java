@@ -8,8 +8,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.security.access.prepost.PreAuthorize;
-//import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StringUtils;
@@ -33,9 +32,8 @@ public class AppUserController {
     private final AppUserService appUserService;
     private final AppUserMapper appUserMapper;
     private final RolesRepo rolesRepo;
-    // private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    // @PreAuthorize("hasAuthority('ROLE_Employe','ROLE_Admin')")
     @GetMapping("/{id}")
     public ResponseEntity<AppUserDto> findById(@PathVariable Long id) {
         AppUsers entity = appUserService.findById(id);
@@ -114,14 +112,13 @@ public class AppUserController {
                 .orElseThrow(() -> new RuntimeException("Role not found"));
 
         // Hachage du mot de passe avec BCrypt
-        // String hashedPassword = passwordEncoder.encode(motDePasse);
+        String hashedPassword = passwordEncoder.encode(motDePasse);
 
         AppUsers user = new AppUsers();
         user.setUserName(userName);
         user.setEmail(email);
         user.setTelephone(telephone);
-        // user.setMotDePasse(hashedPassword);
-        user.setMotDePasse(motDePasse);
+        user.setMotDePasse(hashedPassword);
         user.setRole(role);
         user.setDescription(description);
 
@@ -140,7 +137,6 @@ public class AppUserController {
         String imagePath = uploadDir + imageName;
         profileImage.transferTo(new File(imagePath));
 
-        // user.setProfileImage(imagePath); pour sauv just le nom de l'imge dans la BD
         user.setProfileImage(imageName);
 
         AppUsers entity = appUserService.insert(user);
@@ -172,9 +168,8 @@ public class AppUserController {
         currentUser.setTelephone(telephone);
         currentUser.setDescription(description);
         // Hachage du mot de passe avec BCrypt
-        // String hashedPassword = passwordEncoder.encode(motDePasse);
-        // currentUser.setMotDePasse(hashedPassword);
-        currentUser.setMotDePasse(motDePasse);
+        String hashedPassword = passwordEncoder.encode(motDePasse);
+        currentUser.setMotDePasse(hashedPassword);
         Roles role = rolesRepo.findByRoleName(roleName)
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with name: " + roleName));
         currentUser.setRole(role);
@@ -245,7 +240,6 @@ public class AppUserController {
         return ResponseEntity.ok(jsonResponse);
     }
 
-
     @PatchMapping("/password")
     public ResponseEntity<AppUserDto> updatePassword(@RequestBody AppUserDto pass) {
 
@@ -255,9 +249,8 @@ public class AppUserController {
         }
 
         // Hachage du mot de passe avec BCrypt
-        // String hashedPassword = passwordEncoder.encode(password);
-        // currentUser.setMotDePasse(hashedPassword);
-        currentUser.setMotDePasse(pass.getMotDePasse());
+        String hashedPassword = passwordEncoder.encode(pass.getMotDePasse());
+        currentUser.setMotDePasse(hashedPassword);
 
         AppUsers updatedUser = appUserService.update(currentUser);
 

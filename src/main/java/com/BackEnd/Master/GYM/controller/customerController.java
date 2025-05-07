@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 //import org.springframework.security.access.prepost.PreAuthorize;
 //import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class customerController {
     private final customerMapper custMapper;
     private final AppUserService userRepo;
 
-    // @PreAuthorize("hasAuthority('ROLE_Employe','ROLE_Admin')")
+    @PreAuthorize("hasAuthority('ROLE_Admin')")
     @GetMapping("/{id}")
     public ResponseEntity<customerDto> findById(@PathVariable Long id) {
         customer entity = custService.findById(id);
@@ -44,6 +45,7 @@ public class customerController {
         return ResponseEntity.ok(customerDto);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_Admin')")
     @GetMapping()
     public ResponseEntity<List<customerDto>> findAll() {
         List<customer> entities = custService.findAll();
@@ -51,18 +53,21 @@ public class customerController {
         return ResponseEntity.ok(customerDtos);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_Admin', 'ROLE_Coach')")
     @GetMapping("/count")
     public ResponseEntity<Long> countAllCustomers() {
         long entities = custService.count();
         return ResponseEntity.ok(entities);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_Admin', 'ROLE_Coach')")
     @GetMapping("/search")
     public ResponseEntity<List<customerDto>> searchCustomers(@RequestParam String query) {
         List<customer> entities = custService.searchCustomers(query);
         return ResponseEntity.ok(custMapper.map(entities));
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_Admin', 'ROLE_Coach')")
     @GetMapping("/filtre-name")
     public ResponseEntity<customerDto> filtre(@RequestParam String userName) {
         customer entity = custService.findByUserName(userName);
@@ -70,6 +75,7 @@ public class customerController {
         return ResponseEntity.ok(customerDto);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_Admin', 'ROLE_Coach')")
     @GetMapping("/filtre-user/{id}")
     public ResponseEntity<List<customerDto>> findByUserId(@PathVariable Long id) {
         List<customer> entity = custService.findByUserId(id);
@@ -77,6 +83,7 @@ public class customerController {
         return ResponseEntity.ok(customerDto);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_Admin', 'ROLE_Coach')")
     @GetMapping("/images/{imageName}")
     public ResponseEntity<?> getImage(@PathVariable String imageName) {
         String imagePath = "/home/ali/Bureau/frelance/Master GYM/FrontEnd/src/assets/customer/" + imageName;
@@ -88,13 +95,14 @@ public class customerController {
 
         try {
             return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_JPEG) // Remplacez par le type MIME correct
+                    .contentType(MediaType.IMAGE_JPEG)
                     .body(new FileSystemResource(imgFile));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_Admin', 'ROLE_Coach')")
     @PostMapping(consumes = { "multipart/form-data" })
     public ResponseEntity<customerDto> insert(
             @RequestParam("userName") String userName,
@@ -137,7 +145,6 @@ public class customerController {
         String imagePath = uploadDir + imageName;
         profileImage.transferTo(new File(imagePath));
 
-        // user.setProfileImage(imagePath); pour sauv just le nom de l'imge dans la BD
         customer.setProfileImage(imageName);
 
         customer entity = custService.insert(customer);
@@ -147,6 +154,7 @@ public class customerController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_Admin', 'ROLE_Coach')")
     @PutMapping(consumes = { "multipart/form-data" })
     public ResponseEntity<customerDto> update(
             @RequestParam("id") Long id,
@@ -192,9 +200,6 @@ public class customerController {
 
             String imagePath = uploadDir + imageName;
             profileImage.transferTo(new File(imagePath));
-
-            // pour sauv just le nom de l'imge dans la BD:
-            // currentUser.setProfileImage(imagePath);
             currentCustomer.setProfileImage(imageName);
         }
 
@@ -218,6 +223,7 @@ public class customerController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_Admin')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {
 
@@ -242,7 +248,6 @@ public class customerController {
 
         custService.deleteById(id);
 
-        // Crée une chaîne JSON
         String jsonResponse = "{\"message\": \"Customer and associated image deleted successfully.\"}";
 
         return ResponseEntity.ok(jsonResponse);
