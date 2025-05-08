@@ -83,7 +83,6 @@ public class customerController {
         return ResponseEntity.ok(customerDto);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_Admin', 'ROLE_Coach')")
     @GetMapping("/images/{imageName}")
     public ResponseEntity<?> getImage(@PathVariable String imageName) {
         String imagePath = "/home/ali/Bureau/frelance/Master GYM/FrontEnd/src/assets/customer/" + imageName;

@@ -8,6 +8,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +35,7 @@ public class AppUserController {
     private final RolesRepo rolesRepo;
     private final PasswordEncoder passwordEncoder;
 
+    // @PreAuthorize("hasAnyAuthority('ROLE_Admin', 'ROLE_Coach')")
     @GetMapping("/{id}")
     public ResponseEntity<AppUserDto> findById(@PathVariable Long id) {
         AppUsers entity = appUserService.findById(id);
@@ -41,6 +43,7 @@ public class AppUserController {
         return ResponseEntity.ok(userDto);
     }
 
+    // @PreAuthorize("hasAuthority('ROLE_Admin')")
     @GetMapping()
     public ResponseEntity<List<AppUserDto>> findAll() {
         List<AppUsers> entities = appUserService.findAll();
@@ -48,17 +51,20 @@ public class AppUserController {
         return ResponseEntity.ok(userDtos);
     }
     
+
     @GetMapping("/count")
     public ResponseEntity<Long> countAllUsers() {
         long entities = appUserService.count();
         return ResponseEntity.ok(entities);
     }
 
+
     @GetMapping("/count-coach")
     public ResponseEntity<Long> countByRole(@RequestParam String roleName) {
         long entities = appUserService.countByRoleRoleName(roleName);
         return ResponseEntity.ok(entities);
     }
+
 
     @GetMapping("/search")
     public ResponseEntity<List<AppUserDto>> searchUsers(@RequestParam String query) {
@@ -73,6 +79,7 @@ public class AppUserController {
         return ResponseEntity.ok(userDtos);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_Admin', 'ROLE_Coach')")
     @GetMapping("/filtre")
     public ResponseEntity<AppUserDto> filtre(@RequestParam String userName) {
         AppUsers entity = appUserService.findByUserName(userName);
@@ -97,6 +104,7 @@ public class AppUserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
     @PostMapping(consumes = { "multipart/form-data" })
     public ResponseEntity<AppUserDto> insert(
@@ -145,6 +153,7 @@ public class AppUserController {
 
         return ResponseEntity.ok(responseDto);
     }
+
 
     @PutMapping(consumes = { "multipart/form-data" })
     public ResponseEntity<AppUserDto> update(
@@ -209,6 +218,7 @@ public class AppUserController {
 
         return ResponseEntity.ok(responseDto);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {

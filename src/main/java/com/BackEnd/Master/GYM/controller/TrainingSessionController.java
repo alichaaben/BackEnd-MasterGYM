@@ -7,6 +7,7 @@ import com.BackEnd.Master.GYM.services.TrainingSessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+// import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ import java.util.List;
 public class TrainingSessionController {
     private final TrainingSessionService trainingSessionService;
     private final TrainingSessionMapper trainingSessionMapper;
+
 
     @GetMapping("/{id}")
     public ResponseEntity<TrainingSessionDto> findById(@PathVariable Long id) {
@@ -41,11 +43,13 @@ public class TrainingSessionController {
         return ResponseEntity.ok(trainingSessionMapper.map(entities));
     }
 
+
     @GetMapping("/count/today")
     public long getTotalSessionsToday(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return trainingSessionService.countByDate(date);
     }
     
+
     @GetMapping("/count/active")
     public long getActiveSessionsCount(
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
@@ -53,6 +57,7 @@ public class TrainingSessionController {
     ) {
         return trainingSessionService.countActiveSessions(date, date2);
     }
+
 
     @PostMapping
     public ResponseEntity<TrainingSessionDto> create(@RequestBody TrainingSessionDto dto) {
@@ -68,6 +73,7 @@ public class TrainingSessionController {
         TrainingSession updated = trainingSessionService.update(current);
         return ResponseEntity.ok(trainingSessionMapper.map(updated));
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {

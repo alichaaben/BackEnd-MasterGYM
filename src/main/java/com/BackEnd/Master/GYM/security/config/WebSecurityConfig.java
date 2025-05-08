@@ -67,8 +67,14 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Accès libre pour le login
                         .requestMatchers("/auth/login/**").permitAll()
+                        .requestMatchers("/training-sessions/**").permitAll()
+                        .requestMatchers("/contact-messages/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/user/by-role").permitAll()
+                        
                         // Accès libre pour les images
                         .requestMatchers("/user/images/**").permitAll()
+                        .requestMatchers("/customer/images/**").permitAll()
+                        .requestMatchers("/photos/images/**").permitAll()
                         .requestMatchers("/user/filtre/**").permitAll()
 
                         // Accès pour les album
@@ -83,35 +89,8 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/photos/**").hasAnyRole("Admin", "Coach")
                         .requestMatchers(HttpMethod.DELETE, "/photos/**").hasAnyRole("Admin", "Coach")
 
-                        // Accès pour les contact-msg
-                        .requestMatchers(HttpMethod.GET, "/contact-messages/**").hasAnyRole("Admin", "Coach")
-                        .requestMatchers(HttpMethod.POST, "/contact-messages").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/contact-messages/**").hasAnyRole("Admin", "Coach")
-                        .requestMatchers(HttpMethod.DELETE, "/contact-messages/**").hasAnyRole("Admin", "Coach")
-
-                        // Accès pour les training-sessions
-                        .requestMatchers(HttpMethod.GET, "/training-sessions/**").hasAnyRole("Admin", "Coach")
-                        .requestMatchers(HttpMethod.POST, "/training-sessions").hasAnyRole("Admin", "Coach")
-                        .requestMatchers(HttpMethod.PUT, "/training-sessions/**").hasAnyRole("Admin", "Coach")
-                        .requestMatchers(HttpMethod.DELETE, "/training-sessions/**").hasAnyRole("Admin", "Coach")
-
-                        // Accès pour les customers
-                        //.requestMatchers(HttpMethod.GET, "/customer/**").hasAnyRole("Admin")
-                        // .requestMatchers(HttpMethod.GET, "/customer/filtre-user/**").hasAnyRole("Admin", "Coach")
-                        // .requestMatchers("/customer/filtre-user/**").hasAnyRole("Coach","Admin")
-                        // .requestMatchers(HttpMethod.POST, "/customer").hasAnyRole("Admin", "Coach")
-                        // .requestMatchers(HttpMethod.PUT, "/customer/**").hasAnyRole("Admin", "Coach")
-                        // .requestMatchers(HttpMethod.DELETE, "/customer/**").hasAnyRole("Admin")
-
                         // Accès pour les rôles (uniquement Admin)
                         .requestMatchers("/role/**").hasRole("Admin")
-
-                        // Accès pour les utilisateurs (uniquement Admin)
-                        .requestMatchers(HttpMethod.GET, "/user/**").hasAnyRole("Admin")
-                        .requestMatchers(HttpMethod.POST, "/user").hasAnyRole("Admin")
-                        .requestMatchers(HttpMethod.PUT, "/user/**").hasAnyRole("Admin", "Coach")
-                        .requestMatchers(HttpMethod.PATCH, "/user/**").hasAnyRole("Admin", "Coach")
-                        .requestMatchers(HttpMethod.DELETE, "/user/**").hasAnyRole("Admin")
 
                         // Toutes les autres requêtes nécessitent une authentification
                         .anyRequest().authenticated())

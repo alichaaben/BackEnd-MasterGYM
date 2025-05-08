@@ -46,6 +46,14 @@ public class MasterGymApplication {
 				return rolesRepo.save(newcoatchRole);
 			});
 
+			Optional<Roles> userRoleOpt = rolesRepo.findByRoleName("ROLE_User");
+			userRoleOpt.orElseGet(() -> {
+				Roles newUserRole = new Roles();
+				newUserRole.setRoleName("ROLE_User");
+				newUserRole.setDescription("Standard user role with limited access");
+				return rolesRepo.save(newUserRole);
+			});
+
 			AppUsers existingAdmin = appUserRepository.findByUserName("Admin");
 			if (existingAdmin == null) {
 				AppUsers adminUser = new AppUsers();

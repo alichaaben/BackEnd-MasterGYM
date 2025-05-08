@@ -19,12 +19,21 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.BackEnd.Master.GYM.entity.AppUsers;
+import com.BackEnd.Master.GYM.repository.AppUserRepo;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
 public class SecurityController {
+
+    private final  AppUserRepo appUserRepo;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -44,6 +53,9 @@ public Map<String, String> login(@RequestParam String userName, @RequestParam St
         new UsernamePasswordAuthenticationToken(userName, password)
     );
 
+
+    AppUsers user = appUserRepo.findByUserName(userName);
+
     Instant instant = Instant.now();
     String scope = authentication.getAuthorities().stream()
         .map(GrantedAuthority::getAuthority)
@@ -53,6 +65,7 @@ public Map<String, String> login(@RequestParam String userName, @RequestParam St
         .expiresAt(instant.plus(30, ChronoUnit.MINUTES))
         .subject(userName)
         .claim("scope", scope)
+        .claim("userId", user.getId()) 
         .build();
     
 
